@@ -1,8 +1,9 @@
 package main
 
 import (
-	"ai-test/internal/gemini"
 	"log"
+
+	"github.com/bryanbarton525/go_ai/pkg/gemini"
 )
 
 func main() {
