@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/bryanbarton525/go_ai/pkg/gemini"
@@ -11,9 +12,18 @@ import (
 	"gocv.io/x/gocv"
 )
 
+var (
+	model                  *genai.GenerativeModel
+	ctx                    context.Context
+	movementHistory        []string
+	environmentDescription string
+	prompt                 string // Declare prompt outside the function
+)
+
 func ControlRobot() {
+	var err error
 	// Initialize Gemini client
-	model, ctx, err := gemini.SetupGeminiClient()
+	model, ctx, err = gemini.SetupGeminiClient()
 	if err != nil {
 		log.Fatalf("Failed to set up Gemini client: %v", err)
 	}
@@ -64,8 +74,15 @@ func captureAndProcessImage(webcam *gocv.VideoCapture) ([]byte, error) {
 }
 
 func getDirectionFromGemini(model *genai.GenerativeModel, imgData []byte, ctx context.Context) (interface{}, error) {
-	// prompt := "Based on this image, which direction should the robot move? (forward, backward, left, right)"
-	prompt := "Based on this image, describe to me what you see"
+	prompt = fmt.Sprintf(
+		"The robot has made the following moves: %s. "+
+			"Its current understanding of the environment is: %s. "+
+			"Based on this image, which direction should the robot move next "+
+			"to explore the entire environment for image mapping? "+
+			"Please format response to the following: 'direction (right, left, forward, backward) | description of image' The movement responses map to the following directions: "+
+			"forward: moves 2 feet forward, backward: rotates robot 180 degrees, left: rotates 90 degress to the left, right: rotates 90 degrees to the right.",
+		movementHistory, environmentDescription,
+	)
 	resp, err := model.GenerateContent(
 		ctx,
 		genai.Text(prompt),
@@ -79,13 +96,20 @@ func getDirectionFromGemini(model *genai.GenerativeModel, imgData []byte, ctx co
 		return "", fmt.Errorf("no candidates found in response")
 	}
 
-	// ... (Parse resp.Candidates[0] to extract direction) ...
-	direction := resp.Candidates[0].Content.Parts[0]
+	// ... (Parse resp.Candidates[0] to extract suggestion) ...
+	suggestion := resp.Candidates[0].Content.Parts[0]
+	movement := strings.Split(convertPartToString(suggestion), " | ")[0]
+	environmentDescription = strings.Split(convertPartToString(suggestion), " | ")[1]
+	movementHistory = append(movementHistory, movement)
 
-	return direction, nil
+	return suggestion, nil
 }
 
 func moveRobot(direction string) {
 	// ... (Translate direction into robot commands) ...
 	fmt.Printf("Moving robot: %s\n", direction)
+}
+
+func convertPartToString(part genai.Part) string {
+	return string(part.(genai.Text))
 }
