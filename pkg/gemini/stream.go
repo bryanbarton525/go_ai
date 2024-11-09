@@ -17,7 +17,6 @@ func Stream(model *genai.GenerativeModel, ctx context.Context) {
 
 	// Read from the stream
 	for {
-
 		resp, err := stream.Next()
 		if err == iterator.Done {
 			break

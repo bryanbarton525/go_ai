@@ -10,6 +10,9 @@ import (
 	"google.golang.org/api/option"
 )
 
+// SetupGeminiClient initializes and configures a Gemini client for text generation.
+// It loads the API key from a .env file, creates a new client with the provided API key,
+// and returns the generative model, context, and any error that occurred during setup.
 func SetupGeminiClient() (*genai.GenerativeModel, context.Context, error) {
 	// Load API key from .env file (replace with your actual path)
 	err := godotenv.Load(".env")
@@ -24,11 +27,11 @@ func SetupGeminiClient() (*genai.GenerativeModel, context.Context, error) {
 	if err != nil {
 		log.Fatal("Error creating client:", err)
 	}
-	// defer client.Close()
+	// defer client.Close(
 
 	// Prepare the text generation request
 	// For text-only input, use the gemini-pro model
-	model := client.GenerativeModel("gemini-pro")
+	model := client.GenerativeModel("gemini-1.5-flash")
 
 	return model, ctx, nil
 

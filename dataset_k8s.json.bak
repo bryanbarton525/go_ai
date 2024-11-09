@@ -40,7 +40,7 @@
   {
     "ticket_id": 1003,
     "date_created": "2024-05-02T09:45:00Z",
-    "status": "closed",
+    "status": "reopened",
     "priority": "urgent",
     "channel": "phone",
     "customer_name": "Eva Williams",
@@ -50,8 +50,8 @@
     "cloud_provider": "Azure",
     "summary": "Node NotReady After Upgrade",
     "description": "After upgrading our cluster, one of the worker nodes is in NotReady state. The kubelet service is not responding.",
-    "resolution": "Restarted the kubelet service on the affected node. Node is now in Ready state.",
-    "tags": ["node", "notready", "upgrade", "kubelet", "azure"]
+    "resolution": "",
+    "tags": ["node", "notready", "upgrade", "kubelet", "azure", "reopened"]
   },
   {
     "ticket_id": 1004,
