@@ -60,8 +60,6 @@ func captureAndProcessImage(webcam *gocv.VideoCapture) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read frame from camera")
 	}
 
-	// ... (Preprocess image: resize, format conversion, etc.) ...
-
 	// Encode the image as JPEG
 	buf, err := gocv.IMEncode(".jpg", img)
 	if err != nil {
@@ -96,7 +94,6 @@ func getDirectionFromGemini(model *genai.GenerativeModel, imgData []byte, ctx co
 		return "", fmt.Errorf("no candidates found in response")
 	}
 
-	// ... (Parse resp.Candidates[0] to extract suggestion) ...
 	suggestion := resp.Candidates[0].Content.Parts[0]
 	movement := strings.Split(convertPartToString(suggestion), " | ")[0]
 	environmentDescription = strings.Split(convertPartToString(suggestion), " | ")[1]
@@ -106,7 +103,7 @@ func getDirectionFromGemini(model *genai.GenerativeModel, imgData []byte, ctx co
 }
 
 func moveRobot(direction string) {
-	// ... (Translate direction into robot commands) ...
+	//TODO Implement robot movement based on direction. Use Firmata and Gobot.
 	fmt.Printf("Moving robot: %s\n", direction)
 }
 
